@@ -1,0 +1,35 @@
+[
+    {
+        "Title": "Gladiator",
+        "Year": 2000,
+        "Genre": "Action, Drama",
+        "Director": "Ridley Scott",
+        "Actors": [
+            "Russell Crowe",
+            "Joaquin Phoenix",
+            "Connie Nielsen"
+        ]
+    },
+    {
+        "Title": "Ostatni Samuraj",
+        "Year": 2003,
+        "Genre": "Action, Drama, History",
+        "Director": "Edward Zwick",
+        "Actors": [
+            "Tom Cruise",
+            "Ken Watanabe",
+            "Billy Connolly"
+        ]
+    },
+    {
+        "Title": "John Wick",
+        "Year": 2014,
+        "Genre": "Action, Thriller",
+        "Director": "Chad Stahelski",
+        "Actors": [
+            "Keanu Reeves",
+            "Michael Nyqvist",
+            "Alfie Allen"
+        ]
+    }
+]

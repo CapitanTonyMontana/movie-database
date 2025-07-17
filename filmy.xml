@@ -1,0 +1,36 @@
+<?xml version="1.0" ?>
+<Movies>
+  <Movie>
+    <Title>Incepcja</Title>
+    <Year>2010</Year>
+    <Genre>Sci-Fi, Action</Genre>
+    <Director>Christopher Nolan</Director>
+    <Actors>
+      <Actor>Leonardo DiCaprio</Actor>
+      <Actor>Joseph Gordon-Levitt</Actor>
+      <Actor>Ellen Page</Actor>
+    </Actors>
+  </Movie>
+  <Movie>
+    <Title>Interstellar</Title>
+    <Year>2014</Year>
+    <Genre>Sci-Fi, Adventure</Genre>
+    <Director>Christopher Nolan</Director>
+    <Actors>
+      <Actor>Matthew McConaughey</Actor>
+      <Actor>Anne Hathaway</Actor>
+      <Actor>Jessica Chastain</Actor>
+    </Actors>
+  </Movie>
+  <Movie>
+    <Title>Matrix</Title>
+    <Year>1999</Year>
+    <Genre>Sci-Fi, Action</Genre>
+    <Director>Lana Wachowski, Lilly Wachowski</Director>
+    <Actors>
+      <Actor>Keanu Reeves</Actor>
+      <Actor>Laurence Fishburne</Actor>
+      <Actor>Carrie-Anne Moss</Actor>
+    </Actors>
+  </Movie>
+</Movies>
