@@ -1,6 +1,4 @@
-﻿
-using System.Xml.Serialization;
-
+﻿using System.Xml.Serialization;
 namespace movie_database
 {
     public class Movie
@@ -9,14 +7,10 @@ namespace movie_database
             public int Year { get; set; }
             public string Genre { get; set; }
             public string Director { get; set; }
-            public List<string> Actors { get; set; }
+
+        [XmlArray("Actors")]
+        [XmlArrayItem("Actor")]
+        public List<string> Actors { get; set; }
     }
     
-
-    [XmlRoot("Movies")]
-    public class MovieCollection
-    {
-        [XmlElement("Movie")]
-        public List<Movie> MovieList { get; set; }
-    }
 }
