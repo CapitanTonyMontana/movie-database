@@ -133,12 +133,15 @@
         }
         public static void UpdatedData()
         {
-            Console.WriteLine("Film został zaktualizowany."); 
+            Console.WriteLine("Film został zaktualizowany.");
         }
         public static void UnknownOption()
         {
             Console.WriteLine("Nieznana opcja. Spróbuj ponownie.");
         }
-
+        public static void SetNewData()
+        {
+            Console.WriteLine("Podaj nowe dane. Pozostaw puste, by zachować stare.");
+        }
     }
 }

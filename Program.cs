@@ -102,11 +102,11 @@ class Program
                     var movieToEdit = all.FirstOrDefault(m => m.Title?.Equals(titleToEdit, StringComparison.OrdinalIgnoreCase) == true);
                     if (movieToEdit == null)
                     {
-                        Printer.NoMovieWithTheGivenTitleFound()
+                        Printer.NoMovieWithTheGivenTitleFound();
                         Printer.ENTER();
                         break;
                     }
-                    Console.WriteLine("Podaj nowe dane. Pozostaw puste, by zachować stare.");
+                    Printer.SetNewData();
                     var newTitle = validator.GetOptionalString("Nowy tytuł: ");
                     if (!string.IsNullOrWhiteSpace(newTitle)) movieToEdit.Title = newTitle;
                     var newYearInput = validator.GetOptionalString("Nowy rok: ");
