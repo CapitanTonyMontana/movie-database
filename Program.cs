@@ -5,14 +5,17 @@ class Program
     static void Main()
     {
         bool running = true;
-        var loader = new MovieLibaryLoader();
-        var displayer= new MovieDisplayer();
         var validator = new Validator();
+        var displayer = new MovieDisplayer();
+        var jsonStrategy = new JsonMovieStrategy();
+        var xmlStrategy = new XmlMovieStrategy();
+        var context = new MovieStorageContext(jsonStrategy); 
+        var jsonPath = "filmy.json";
+        var xmlPath = "filmy.xml";
         List<Movie> allMovies = new();
-        allMovies.AddRange(loader.LoadFromJson("filmy.json"));
-        allMovies.AddRange(loader.LoadFromXml("filmy.xml"));
+        allMovies.AddRange(jsonStrategy.Load(jsonPath));
+        allMovies.AddRange(xmlStrategy.Load(xmlPath));
         while (running)
-            
         {
             Printer.ENTER();
             Printer.MOVIELIBARY();
@@ -28,7 +31,6 @@ class Program
             Printer.END();
             Printer.ENTER();
             var choice = Console.ReadLine();
-
             switch (choice)
             {
                 case "1":
@@ -56,50 +58,38 @@ class Program
                     break;
                 case "5":
                     Printer.ENTER();
-                    int year = validator.GetValidYear("Podaj rok: ");
+                    var year = validator.GetValidYear("Podaj rok: ");
                     displayer.ShowMoviesFromYear(allMovies, year);
                     Printer.ENTER();
                     break;
                 case "6":
                     Printer.ENTER();
-                    var format = validator.GetFileFormat();
+                    var addFormat = validator.GetFileFormat();
                     var newMovie = displayer.GetMovieFromUser();
-                    if (format == "json")
-                        loader.AppendToJson("filmy.json", newMovie);
-                    else
-                        loader.AppendToXml("filmy.xml", newMovie);
-                    allMovies = loader.LoadFromJson("filmy.json");
-                    allMovies.AddRange(loader.LoadFromXml("filmy.xml"));
+                    context.SetStrategy(addFormat == "json" ? jsonStrategy : xmlStrategy);
+                    context.Append(addFormat == "json" ? jsonPath : xmlPath, newMovie);
+                    allMovies = jsonStrategy.Load(jsonPath);
+                    allMovies.AddRange(xmlStrategy.Load(xmlPath));
                     Printer.ENTER();
                     break;
-
                 case "7":
                     Printer.ENTER();
                     var deleteFormat = validator.GetFileFormat();
                     var titleToDelete = validator.GetNonEmptyString("Podaj tytuł filmu do usunięcia: ");
-                    if (deleteFormat == "json")
-                        loader.DeleteFromJson("filmy.json", titleToDelete);
-                    else
-                        loader.DeleteFromXml("filmy.xml", titleToDelete);
+                    context.SetStrategy(deleteFormat == "json" ? jsonStrategy : xmlStrategy);
+                    context.Delete(deleteFormat == "json" ? jsonPath : xmlPath, titleToDelete);
+                    allMovies = jsonStrategy.Load(jsonPath);
+                    allMovies.AddRange(xmlStrategy.Load(xmlPath));
                     Printer.ENTER();
                     break;
                 case "8":
                     Printer.ENTER();
                     var editFormat = validator.GetFileFormat();
                     var titleToEdit = validator.GetNonEmptyString("Podaj tytuł filmu do edycji: ");
-                    var all = editFormat switch
-                    {
-                        "json" => loader.LoadFromJson("filmy.json"),
-                        "xml" => loader.LoadFromXml("filmy.xml"),
-                        _ => null
-                    };
-                    if (all == null)
-                    {
-                        Printer.InvalidFormat();
-                        Printer.ENTER();
-                        break;
-                    }
-                    var movieToEdit = all.FirstOrDefault(m => m.Title?.Equals(titleToEdit, StringComparison.OrdinalIgnoreCase) == true);
+                    context.SetStrategy(editFormat == "json" ? jsonStrategy : xmlStrategy);
+                    var editPath = editFormat == "json" ? jsonPath : xmlPath;
+                    var moviesToEdit = context.Load(editPath);
+                    var movieToEdit = moviesToEdit.FirstOrDefault(m => m.Title?.Equals(titleToEdit, StringComparison.OrdinalIgnoreCase) == true);
                     if (movieToEdit == null)
                     {
                         Printer.NoMovieWithTheGivenTitleFound();
@@ -108,23 +98,38 @@ class Program
                     }
                     Printer.SetNewData();
                     var newTitle = validator.GetOptionalString("Nowy tytuł: ");
-                    if (!string.IsNullOrWhiteSpace(newTitle)) movieToEdit.Title = newTitle;
+                    if (!string.IsNullOrWhiteSpace(newTitle))
+                    {
+                        movieToEdit.Title = newTitle;
+                    }
                     var newYearInput = validator.GetOptionalString("Nowy rok: ");
-                    if (int.TryParse(newYearInput, out int newYear)) movieToEdit.Year = newYear;
+                    if (int.TryParse(newYearInput, out int newYear))
+                    {
+                        movieToEdit.Year = newYear;
+                    }
                     var newGenre = validator.GetOptionalString("Nowy gatunek: ");
-                    if (!string.IsNullOrWhiteSpace(newGenre)) movieToEdit.Genre = newGenre;
+                    if (!string.IsNullOrWhiteSpace(newGenre))
+                    {
+                        movieToEdit.Genre = newGenre;
+                    }
                     var newDirector = validator.GetOptionalString("Nowy reżyser: ");
-                    if (!string.IsNullOrWhiteSpace(newDirector)) movieToEdit.Director = newDirector;
+                    if (!string.IsNullOrWhiteSpace(newDirector))
+                    {
+                        movieToEdit.Director = newDirector;
+                    }
                     var actorsInput = validator.GetOptionalString("Nowi aktorzy (oddzieleni przecinkami): ");
                     if (!string.IsNullOrWhiteSpace(actorsInput))
-                        movieToEdit.Actors = actorsInput.Split(',').Select(a => a.Trim()).ToList();
-                    if (editFormat == "json")
-                        loader.SaveToJson("filmy.json", all);
-                    else
-                        loader.SaveToXml("filmy.xml", all);
+                    {
+                        movieToEdit.Actors = actorsInput
+                            .Split(',')
+                            .Select(a => a.Trim())
+                            .Where(a => !string.IsNullOrWhiteSpace(a))
+                            .ToList();
+                    }
+                    context.Save(editPath, moviesToEdit);
+                    allMovies = jsonStrategy.Load(jsonPath);
+                    allMovies.AddRange(xmlStrategy.Load(xmlPath));
                     Printer.UpdatedData();
-                    allMovies = loader.LoadFromJson("filmy.json");
-                    allMovies.AddRange(loader.LoadFromXml("filmy.xml"));
                     Printer.ENTER();
                     break;
                 case "9":
@@ -138,4 +143,6 @@ class Program
             }
         }
     }
-}                                                      
+
+}
+    
